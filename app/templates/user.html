@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<body class="bg-light">
+    <div class="container">
+        <main>
+            <div class="pt-5 text-center">
+                <h2>Register Form</h2>
+                <p class="lead">Join us to register your info</p>
+            </div>
+
+            <div class="col-md-12 col-lg-12">
+                <h4 class="mb-3">Your Info</h4>
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            {{ form.hidden_tag() }}
+                            <!--<label for="username" class="form-label">Username</label>-->
+                            {{ form.username.label(for="username", class="form-label") }}
+                            <!--<input type="text" class="form-control" id="username" placeholder="Username" required>-->
+                            {{ form.username(class="form-control", id="username", value=user.username) }}
+                        </div>
+                        <div class="col-12">
+                            <!--<label for="email" class="form-label">Email</label>-->
+                            {{ form.email.label(for="email", class="form-label") }}
+                            <!--<input type="email" class="form-control" id="email" placeholder="you@example.com">-->
+                            {{ form.email(class="form-control", id="email", value=user.email) }}
+                        </div>
+                        <div class="col-12">
+                            <!--<label for="password" class="form-label">Password</label>--> 
+                            {{ form.password.label(for="password", class="form-label") }} 
+                            <!--<input type="text" class="form-control" id="password" placeholder="Password" required>--> 
+                            {{ form.password(class="form-control", id="password", value=user.password) }}
+                        </div>
+                        <div class="col-12">
+                            <label for="hobby" class="form-label">Hobby</label>
+                            <select class="form-select" name="hobby" id="hobby">
+                                <option value="">Select your hobby</option>
+                                <option value="Anime" {% if user.hobby == 'Anime' %}selected{% endif %}>Anime</option>
+                                <option value="Sports" {% if user.hobby == 'Sports' %}selected{% endif %}>Sports</option>
+                                <!-- 他の趣味を追加 -->
+                                <option value="Music" {% if user.hobby == 'Music' %}selected{% endif %}>Music</option>
+                                <option value="Gaming" {% if user.hobby == 'Gaming' %}selected{% endif %}>Gaming</option>
+                            </select>
+                        </div>                        
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!--<button class="w-100 btn btn-primary btn-lg mb-5" type="submit">Register</button>--> 
+                    {{ form.submit(class="w-100 btn btn-primary btn-lg mb-5") }}
+                </form>
+            </div>
+        </main>
+    </div>
+    <script 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" 
+        crossorigin="anonymous"></script>
+</body>
+{% endblock %}

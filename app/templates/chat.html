@@ -1,0 +1,225 @@
+<!doctype html> 
+<html lang="ja"> 
+    <head> 
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1"> 
+        <title>{% block title %}チャット{% endblock %}</title>
+        
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='chat.css') }}">
+        
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </head>
+    
+    <body>
+        <!-- ナビゲーションバー -->
+        <nav class="navbar navbar-expand-md navbar-light fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('app.index') }}">
+                    <i class="fas fa-comments me-2"></i>趣MEET
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('app.index') }}">
+                                <i class="fas fa-home me-1"></i>ホーム
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <div class="d-flex align-items-center">
+                        <span class="text-muted me-3">
+                            <i class="fas fa-user me-1"></i>{{ current_user.username }}
+                        </span>
+                        <a class="btn btn-outline-danger btn-sm" href="{{ url_for('app.logout') }}">
+                            <i class="fas fa-sign-out-alt me-1"></i>ログアウト
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- メインコンテナ -->
+        <div class="chat-container">
+            <!-- チャットヘッダー -->
+            <div class="chat-header">
+                <h2>
+                    <i class="fas fa-comments me-2"></i>チャット
+                </h2>
+                
+                {% if chat_user %}
+                <div class="chat-user-info">
+                    <div class="user-avatar">
+                        {{ chat_user.username[0].upper() }}
+                    </div>
+                    <div class="user-status">
+                        <div class="user-name">{{ chat_user.username }}</div>
+                        <div class="user-status-text">
+                            <i class="fas fa-circle text-success me-1"></i>オンライン
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- フラッシュメッセージ -->
+            {% with flash_messages = get_flashed_messages(with_categories=true) %}
+                {% if flash_messages %}
+                    {% for category, message in flash_messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'info' }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'info-circle' }} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- メッセージエリア -->
+            <div class="messages-container" id="messages-container">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="message {{ 'sent' if message.from_ == current_user.id else 'received' }}">
+                            {% if message.from_ != current_user.id %}
+                                <div class="user-avatar small">
+                                    {{ chat_user.username[0].upper() if chat_user else 'U' }}
+                                </div>
+                            {% endif %}
+                            
+                            <div class="message-content">
+                                <div class="message-text">{{ message.body }}</div>
+                                <span class="message-time">
+                                    {% if message.timestanp %}
+                                        {{ message.timestanp.strftime('%H:%M') }}
+                                    {% else %}
+                                        送信時刻不明
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-messages">
+                        <div class="empty-messages-icon">
+                            <i class="fas fa-comment-dots"></i>
+                        </div>
+                        <h3>まだメッセージがありません</h3>
+                        <p>最初のメッセージを送信して、会話を始めましょう！</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- メッセージ入力フォーム -->
+            <div class="message-form-container">
+                <form method="POST" class="message-form">
+                    <div class="message-input-group">
+                        {{ form.hidden_tag() }}
+                        {{ form.message(
+                            class="message-input",
+                            id="message",
+                            rows="1",
+                            placeholder="メッセージを入力してください...",
+                            autocomplete="off"
+                        ) }}
+                    </div>
+                    
+                    <button type="submit" class="send-button" id="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- JavaScript -->
+        <script>
+            // メッセージコンテナを最下部にスクロール
+            function scrollToBottom() {
+                const messagesContainer = document.getElementById('messages-container');
+                if (messagesContainer) {
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
+            }
+            
+            // ページ読み込み時にスクロール
+            window.addEventListener('load', scrollToBottom);
+            
+            // フォーム送信後にスクロール
+            document.querySelector('form').addEventListener('submit', function() {
+                setTimeout(scrollToBottom, 100);
+            });
+            
+            // ページ読み込み後に少し待ってからスクロール
+            setTimeout(scrollToBottom, 500);
+            
+            // テキストエリアの自動リサイズ
+            const messageInput = document.getElementById('message');
+            const sendButton = document.getElementById('send-button');
+            
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+            
+            // Enterキーで送信（Shift+Enterで改行）
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendButton.click();
+                }
+            });
+            
+            // フォーカス時のアニメーション
+            messageInput.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            messageInput.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+            
+            // 送信ボタンのホバーエフェクト
+            sendButton.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px) scale(1.05)';
+            });
+            
+            sendButton.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+            
+            // メッセージのアニメーション
+            const messages = document.querySelectorAll('.message');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+            
+            messages.forEach(message => {
+                message.style.opacity = '0';
+                message.style.transform = 'translateY(20px)';
+                message.style.transition = 'all 0.3s ease-out';
+                observer.observe(message);
+            });
+        </script>
+        
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
