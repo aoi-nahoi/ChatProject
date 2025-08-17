@@ -3,94 +3,454 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Register</title>
+    <title>新規登録 - 趣MEET</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #48bb78;
+            --danger-color: #f56565;
+            --warning-color: #ed8936;
+            --info-color: #4299e1;
+            --gray-100: #f7fafc;
+            --gray-200: #edf2f7;
+            --gray-300: #e2e8f0;
+            --gray-400: #cbd5e0;
+            --gray-500: #a0aec0;
+            --gray-600: #718096;
+            --gray-700: #4a5568;
+            --gray-800: #2d3748;
+            --gray-900: #1a202c;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
 
-    <link 
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
-        rel="stylesheet" 
-        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" 
-        crossorigin="anonymous">
-    <!-- ここでstyle.cssとform-validation.cssを読み込みます -->
-    <link href="style.css" rel="stylesheet">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .register-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+            padding: 3rem 2rem 2rem;
+            position: relative;
+        }
+
+        .register-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .register-logo {
+            position: relative;
+            z-index: 1;
+        }
+
+        .register-logo i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .register-logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .register-logo p {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .register-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-control::placeholder {
+            color: var(--gray-400);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group .form-control {
+            padding-right: 3rem;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            z-index: 10;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .register-footer {
+            text-align: center;
+            padding: 1.5rem 2rem 2rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .register-footer p {
+            color: var(--gray-600);
+            margin-bottom: 0;
+        }
+
+        .register-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .register-footer a:hover {
+            color: var(--secondary-color);
+        }
+
+        .alert {
+            border: none;
+            border-radius: 15px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, var(--danger-color), #e53e3e);
+            color: white;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, var(--success-color), #38a169);
+            color: white;
+        }
+
+        .hobby-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .hobby-option {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .hobby-option:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .hobby-option.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .hobby-option i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* アニメーション */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* レスポンシブデザイン */
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+            
+            .register-container {
+                border-radius: 20px;
+            }
+            
+            .register-header {
+                padding: 2rem 1.5rem 1.5rem;
+            }
+            
+            .register-body {
+                padding: 1.5rem;
+            }
+            
+            .register-footer {
+                padding: 1rem 1.5rem 1.5rem;
+            }
+            
+            .hobby-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container">
-        <main>
-            <div class="pt-5 text-center">
-                <h2>Register form</h2>
-                <p class="lead">Join us to register your info!</p>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <div class="register-logo">
+                <i class="fas fa-user-plus"></i>
+                <h1>新規登録</h1>
+                <p>趣MEETのアカウントを作成しましょう</p>
             </div>
-
-            <!-- フラッシュメッセージを表示 -->
-            {% with messages = get_flashed_messages(with_categories=True) %}
-            {% if messages %}
-                <ul class="flashes">
-                {% for category, message in messages %}
-                    <li class="{{ category}}">{{ message }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-            {% endwith %}
-
-            <div class="register-container">
-                <div class="col-md-12 col-lg-12">
-                    <h4 class="mb-3">Your info</h4>
-                    <form method="POST">
-                        <div class="row g-3">
-                            <div class="col-12">
-                                {{ form.hidden_tag() }}
-                                {{ form.username.label(for="username", class="form-label") }}
-                                {{ form.username(class="form-control", id="username", placeholder="Username") }}
-                                {% if form.username.errors %}
-                                    <ul>
-                                        {% for error in form.username.errors %}
-                                            <li class="text-danger">{{ error }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-                            </div>
-                            <div class="col-12">
-                                {{ form.email.label(for="email", class="form-label") }}
-                                {{ form.email(class="form-control", id="email", placeholder="you@example.com") }}
-                                {% if form.email.errors %}
-                                    <ul>
-                                        {% for error in form.email.errors %}
-                                            <li class="text-danger">{{ error }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-                            </div>
-                            <div class="col-12">
-                                {{ form.password.label(for="password", class="form-label") }}
-                                {{ form.password(class="form-control", id="password", placeholder="Password") }}
-                                {% if form.password.errors %}
-                                    <ul>
-                                        {% for error in form.password.errors %}
-                                            <li class="text-danger">{{ error }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-                            </div>
-                            <div class="col-12">
-                                {{ form.hobby.label(for="hobby", class="form-label") }}
-                                {{ form.hobby(class="form-control", id="hobby") }}
-                                {% if form.hobby.errors %}
-                                    <ul>
-                                        {% for error in form.hobby.errors %}
-                                            <li class="text-danger">{{ error }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-                            </div>                        
+        </div>
+        
+        <div class="register-body">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            {{ message }}
                         </div>
-                        <hr class="my-4">
-                        {{ form.submit(class="w-100 btn btn-primary btn-lg mb-5") }}
-                    </form>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user me-2"></i>ユーザー名
+                    </label>
+                    <div class="input-group">
+                        {{ form.username(class="form-control", id="username", placeholder="ユーザー名を入力") }}
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
                 </div>
-            </div>
-        </main>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope me-2"></i>メールアドレス
+                    </label>
+                    <div class="input-group">
+                        {{ form.email(class="form-control", id="email", placeholder="example@email.com") }}
+                        <i class="fas fa-envelope input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock me-2"></i>パスワード
+                    </label>
+                    <div class="input-group">
+                        {{ form.password(class="form-control", id="password", placeholder="パスワードを入力") }}
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="hobby" class="form-label">
+                        <i class="fas fa-heart me-2"></i>趣味
+                    </label>
+                    {{ form.hobby(class="form-select", id="hobby") }}
+                    
+                    <div class="hobby-options">
+                        <div class="hobby-option" data-value="anime">
+                            <i class="fas fa-tv"></i>
+                            <div>アニメ</div>
+                        </div>
+                        <div class="hobby-option" data-value="sports">
+                            <i class="fas fa-futbol"></i>
+                            <div>スポーツ</div>
+                        </div>
+                        <div class="hobby-option" data-value="music">
+                            <i class="fas fa-music"></i>
+                            <div>音楽</div>
+                        </div>
+                        <div class="hobby-option" data-value="gaming">
+                            <i class="fas fa-gamepad"></i>
+                            <div>ゲーム</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus me-2"></i>アカウント作成
+                </button>
+            </form>
+        </div>
+        
+        <div class="register-footer">
+            <p>既にアカウントをお持ちの方は 
+                <a href="{{ url_for('app.login') }}">こちら</a>
+            </p>
+        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script>
+        // 趣味選択のインタラクティブ機能
+        const hobbyOptions = document.querySelectorAll('.hobby-option');
+        const hobbySelect = document.getElementById('hobby');
+        
+        hobbyOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // 既存の選択をクリア
+                hobbyOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // 新しい選択を設定
+                this.classList.add('selected');
+                hobbySelect.value = this.dataset.value;
+            });
+        });
+        
+        // 初期選択状態を設定
+        if (hobbySelect.value) {
+            const selectedOption = document.querySelector(`[data-value="${hobbySelect.value}"]`);
+            if (selectedOption) {
+                selectedOption.classList.add('selected');
+            }
+        }
+        
+        // セレクトボックスの変更を監視
+        hobbySelect.addEventListener('change', function() {
+            hobbyOptions.forEach(opt => opt.classList.remove('selected'));
+            const selectedOption = document.querySelector(`[data-value="${this.value}"]`);
+            if (selectedOption) {
+                selectedOption.classList.add('selected');
+            }
+        });
+    </script>
 </body>
 </html>
 
