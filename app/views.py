@@ -113,6 +113,19 @@ def chat(to_=None):
             )
         ).order_by(Message.timestanp).all()
         
+        # メッセージに日時情報を追加
+        from datetime import datetime, date, timedelta
+        today = date.today()
+        yesterday = today - timedelta(days=1)
+        current_year = today.year
+        
+        for message in messages:
+            if message.timestanp:
+                message_date = message.timestanp.date()
+                message.is_today = message_date == today
+                message.is_yesterday = message_date == yesterday
+                message.is_this_year = message_date.year == current_year
+        
         print(f"Debug: Found {len(messages)} messages between users")
         for msg in messages:
             print(f"Debug: Filtered messages - ID: {msg.id}, from: {msg.from_}, to: {msg.to_}, body: '{msg.body}'")
@@ -145,6 +158,14 @@ def chat(to_=None):
                     )
                 )
             ).order_by(Message.timestanp).all()
+            
+            # 再取得したメッセージにも日時情報を追加
+            for message in messages:
+                if message.timestanp:
+                    message_date = message.timestanp.date()
+                    message.is_today = message_date == today
+                    message.is_yesterday = message_date == yesterday
+                    message.is_this_year = message_date.year == current_year
             
             print(f"Debug: After sending, found {len(messages)} messages")
             for msg in messages:

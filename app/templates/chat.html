@@ -104,7 +104,15 @@
                                 <div class="message-text">{{ message.body }}</div>
                                 <span class="message-time">
                                     {% if message.timestanp %}
-                                        {{ message.timestanp.strftime('%H:%M') }}
+                                        {% if message.is_today %}
+                                            {{ message.timestanp.strftime('今日 %H:%M') }}
+                                        {% elif message.is_yesterday %}
+                                            {{ message.timestanp.strftime('昨日 %H:%M') }}
+                                        {% elif message.is_this_year %}
+                                            {{ message.timestanp.strftime('%m/%d %H:%M') }}
+                                        {% else %}
+                                            {{ message.timestanp.strftime('%Y/%m/%d %H:%M') }}
+                                        {% endif %}
                                     {% else %}
                                         送信時刻不明
                                     {% endif %}
