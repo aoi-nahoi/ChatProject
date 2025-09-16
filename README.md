@@ -34,7 +34,8 @@ ChatProjectは、ユーザー間でリアルタイムチャットができるWeb
 - **Werkzeug** - パスワードハッシュ化
 
 ### データベース
-- **SQLite** - 軽量データベース
+- **PostgreSQL** - 本番環境用データベース
+- **SQLite** - 開発環境用データベース（フォールバック）
 - **Alembic** - データベースマイグレーション管理
 
 ### フロントエンド
@@ -117,15 +118,50 @@ source venv/bin/activate
 
 ### 3. 依存関係のインストール
 ```bash
+pip install -r requirements.txt
+```
+
+または個別にインストール：
+```bash
 pip install flask
 pip install flask-sqlalchemy
 pip install flask-migrate
 pip install flask-login
 pip install flask-wtf
 pip install werkzeug
+pip install psycopg2-binary
+pip install python-dotenv
 ```
 
-### 4. データベースの初期化
+### 4. 環境変数の設定
+開発環境用の環境変数を設定します：
+
+```bash
+# .envファイルを作成（開発環境用）
+echo "SECRET_KEY=your_secret_key_here" > .env
+echo "DB_HOST=localhost" >> .env
+echo "DB_PORT=5432" >> .env
+echo "DB_NAME=chatproject" >> .env
+echo "DB_USER=postgres" >> .env
+echo "DB_PASSWORD=password" >> .env
+```
+
+### 5. PostgreSQLのセットアップ
+PostgreSQLがインストールされていることを確認し、データベースを作成します：
+
+```bash
+# PostgreSQLに接続
+psql -U postgres
+
+# データベースを作成
+CREATE DATABASE chatproject;
+
+# ユーザーを作成（必要に応じて）
+CREATE USER chatproject_user WITH PASSWORD 'password';
+GRANT ALL PRIVILEGES ON DATABASE chatproject TO chatproject_user;
+```
+
+### 6. データベースの初期化
 ```bash
 # データベースの作成
 flask db init
@@ -173,11 +209,23 @@ flask run
 
 ### 必須設定
 - `SECRET_KEY`: セッション暗号化用の秘密鍵
-- `SQLALCHEMY_DATABASE_URI`: データベース接続URI
+- `DATABASE_URL`: 本番環境用のデータベース接続URI（Renderが自動設定）
+
+### 開発環境用設定
+- `DB_HOST`: データベースホスト（デフォルト: localhost）
+- `DB_PORT`: データベースポート（デフォルト: 5432）
+- `DB_NAME`: データベース名（デフォルト: chatproject）
+- `DB_USER`: データベースユーザー名（デフォルト: postgres）
+- `DB_PASSWORD`: データベースパスワード（デフォルト: password）
 
 ### 推奨設定
 - `FLASK_ENV`: 環境設定（development/production）
 - `DEBUG`: デバッグモードの有効/無効
+
+### Renderでのデプロイ設定
+Renderにデプロイする際は、以下の環境変数を設定してください：
+- `SECRET_KEY`: 強力な秘密鍵を設定
+- `DATABASE_URL`: Renderが自動的に設定（PostgreSQL）
 
 ## 開発・デバッグ
 
